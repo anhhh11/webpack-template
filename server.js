@@ -4,6 +4,7 @@ const webpack = require('webpack');
 const webpackDevMiddleware = require('webpack-dev-middleware');
 const webHotMiddleware = require('webpack-hot-middleware');
 const WebpackConfig = require('./webpack.config');
+const path = require('path');
 
 const app = express();
 const port = 8080;
@@ -28,7 +29,7 @@ app.use(webpackDevMiddleware(webpackCfg, {
   stats: {colors: true}
 }));
 
-app.use(express.static(__dirname));
+app.use(express.static(path.resolve(__dirname,'__build__')));
 
 app.listen(port, function () {
   console.log('Server listening on http://0.0.0.0:' + port + ', Ctrl+C to stop');

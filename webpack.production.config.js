@@ -2,18 +2,23 @@
  * Created by anhhh11 on 4/19/2016.
  */
 const webpack = require('webpack');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 const path = require('path');
+const _ = require('lodash');
+const packages = Object.keys(require('./package.json').dependencies);
 module.exports = {
 
   devtool: 'source-map',
-  // ?path=http://localhost:8080/__webpack_hmr
-  entry: path.join(__dirname, 'entry.js'),
+  entry: {
+    entry: path.join(__dirname, 'entry.js'),
+    vendors: _.without(packages,'bootstrap'),
+  },
 
   output: {
     path: __dirname + '/__build__',
-    filename: 'app.js',
-    // chunkFilename: '[id].chunk.js',
-    publicPath: '/__build__/'
+    filename: '[name].[hash].bundle.js',
+    chunkFilename: '[name].[hash].chunk.js',
+    publicPath: '/' //loading on demand path
   },
 
   module: {
@@ -32,7 +37,7 @@ module.exports = {
   },
 
   plugins: [
-    //new webpack.optimize.CommonsChunkPlugin('shared.js'),
+    new webpack.optimize.CommonsChunkPlugin('vendors','vendors.[hash].bundle.js'),
     new webpack.optimize.UglifyJsPlugin({
       mangle: true,
       compress: {
@@ -42,6 +47,7 @@ module.exports = {
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'production')
     }),
+    new HtmlWebpackPlugin(),
     new webpack.NoErrorsPlugin()
   ]
 };

@@ -2,6 +2,7 @@
  * Created by anhhh11 on 4/19/2016.
  */
 const webpack = require('webpack');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 const path = require('path');
 const _ = require('lodash');
 const packages = Object.keys(require('./package.json').dependencies);
@@ -10,14 +11,14 @@ module.exports = {
   devtool: 'eval',
   entry: {
     entry: ['webpack-hot-middleware/client?reload=true', path.join(__dirname, 'entry.js')],
-    common: packages
+    vendors: _.without(packages,'bootstrap'),
   },
 
   output: {
     path: __dirname + '/__build__',
-    filename: 'app.js',
-    chunkFilename: '[name].[id].chunk.js',
-    publicPath: '/__build__/' //loading on demand path
+    filename: '[name].[hash].bundle.js',
+    chunkFilename: '[name].[hash].chunk.js',
+    publicPath: '/' //loading on demand path
   },
 
   module: {
@@ -36,11 +37,12 @@ module.exports = {
   },
 
   plugins: [
-    new webpack.optimize.CommonsChunkPlugin('common.js'),
+    new webpack.optimize.CommonsChunkPlugin('vendors','vendors.[hash].bundle.js'),
     new webpack.HotModuleReplacementPlugin(),
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development')
     }),
+    new HtmlWebpackPlugin(),
     new webpack.NoErrorsPlugin()
   ]
 };
