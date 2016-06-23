@@ -1,0 +1,8 @@
+__build__/**
+__test__/**
+logs/**
+!__build__/empty
+!__test__/empty
+!logs/empty
+node_modules
+.idea
