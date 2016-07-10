@@ -10,26 +10,27 @@ const app = express();
 const port = 8080;
 const webpackCfg = webpack(WebpackConfig);
 
+console.log(process.env.NODE_ENV);
+if (process.env.NODE_ENV !== 'production') {
+  // Start watching and bundling tests here
+  var tests = require('./webpack.test.config'),
+    testsCompiler = webpack(tests);
 
-// Start watching and bundling tests here
-var tests = require('./webpack.test.config'),
-  testsCompiler = webpack(tests);
+  testsCompiler.watch({}, function (err, stats) {
+    if (err) console.log(err);
+    console.log('Test files bundled');
+    console.log(stats.toString({colors: true}));
+  });
 
-testsCompiler.watch({}, function (err,stats) {
-  if (err) console.log(err);
-  console.log('Test files bundled');
-  console.log(stats.toString({colors:true}));
-});
+  app.use(webHotMiddleware(webpackCfg));
 
-
-app.use(webHotMiddleware(webpackCfg));
-
-app.use(webpackDevMiddleware(webpackCfg, {
-  publicPath: 'http://0.0.0.0:' + port + '/__build__/',
-  stats: {colors: true}
-}));
-
-app.use(express.static(path.resolve(__dirname,'__build__')));
+  app.use(webpackDevMiddleware(webpackCfg, {
+    publicPath: 'http://0.0.0.0:' + port + WebpackConfig.output.publicPath,
+    stats: {colors: true}
+  }));
+} else {
+  app.use(express.static(path.resolve(__dirname, '__build__')));
+}
 
 app.listen(port, function () {
   console.log('Server listening on http://0.0.0.0:' + port + ', Ctrl+C to stop');

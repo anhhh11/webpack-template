@@ -11,7 +11,7 @@ module.exports = {
   devtool: 'eval',
   entry: {
     entry: ['webpack-hot-middleware/client?reload=true', path.join(__dirname, 'entry.js')],
-    vendors: _.without(packages,'bootstrap'),
+    vendors: _.without(packages, 'bootstrap'),
   },
 
   output: {
@@ -37,12 +37,14 @@ module.exports = {
   },
 
   plugins: [
-    new webpack.optimize.CommonsChunkPlugin('vendors','vendors.[hash].bundle.js'),
+    new webpack.optimize.CommonsChunkPlugin('vendors', 'vendors.[hash].bundle.js'),
     new webpack.HotModuleReplacementPlugin(),
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development')
     }),
-    new HtmlWebpackPlugin(),
+    new HtmlWebpackPlugin({
+      template: './index.html'
+    }),
     new webpack.NoErrorsPlugin()
   ]
 };
