@@ -10,7 +10,6 @@ const app = express();
 const port = 8080;
 const webpackCfg = webpack(WebpackConfig);
 
-console.log(process.env.NODE_ENV);
 if (process.env.NODE_ENV !== 'production') {
   // Start watching and bundling tests here
   var tests = require('./webpack.test.config'),
